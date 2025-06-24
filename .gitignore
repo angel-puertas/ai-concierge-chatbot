@@ -1,0 +1,40 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+build/
+.out/
+.vercel/
+.next/
+
+# Payload CMS cache
+.cache/
+.payload/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Vite
+.vite/
+
+# VSCode
+.vscode/
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional: OS/IDE
+.idea/
+*.swp
+*.swo
