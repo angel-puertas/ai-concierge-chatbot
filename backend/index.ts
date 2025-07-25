@@ -7,7 +7,7 @@ import payloadConfig from './payload.config.js';
 import cors from 'cors';
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 const start = async () => {
   try {
@@ -30,10 +30,10 @@ const start = async () => {
 
     // CORS configuration
     const corsOptions = {
-      origin: process.env.PRODUCTION_URL || 'http://localhost:5173',
+      origin: process.env.FRONTEND_URL,
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Access-Control-Allow-Origin'],
     };
     
     // Middleware
