@@ -1,7 +1,9 @@
 {
     "type": "module",
     "scripts": {
-        "dev": "nodemon --watch \"./**/*.ts\" --exec node --loader ts-node/esm index.ts"
+        "dev": "node --loader ts-node/esm index.ts",
+        "build": "tsc",
+        "start": "node dist/index.js"
     },
     "dependencies": {
         "@payloadcms/db-mongodb": "^3.48.0",

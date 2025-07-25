@@ -3,15 +3,12 @@
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "node",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "strict": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./",
-    "paths": {
-      "*": ["node_modules/*"]
-    }
+    "moduleDetection": "force",
+    "skipLibCheck": true
   },
-  "ts-node": {
-    "esm": true
-  }
+  "include": ["**/*.ts"]
 }
