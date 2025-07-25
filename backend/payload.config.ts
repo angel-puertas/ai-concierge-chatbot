@@ -1,21 +1,13 @@
+import { buildConfig } from 'payload'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
-import { FAQ } from './collections/faq'
+import FAQ from './collections/faq.js'
 
-export default {
-    secret: process.env.PAYLOAD_SECRET,
-    db: mongooseAdapter({
-        url: process.env.DATABASE_URI,
-    }),
-    collections: [
-        {
-            slug: 'pages',
-            fields: [
-                {
-                    name: 'title',
-                    type: 'text',
-                },
-            ],
-        },
-        FAQ
-    ],
-}
+export default buildConfig({
+  secret: process.env.PAYLOAD_SECRET!,
+  collections: [
+    FAQ,
+  ],
+  db: mongooseAdapter({
+    url: process.env.DATABASE_URI!,
+  }),
+})

@@ -9,7 +9,8 @@ interface Message {
 const ChatWidget = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState<string>('');
-
+    const apiUrl = (window as any).env?.REACT_APP_API_URL || 'http://localhost:3000';
+    
     const sendMessage = async () => {
         if (!input) return;
 
@@ -18,7 +19,10 @@ const ChatWidget = () => {
         setInput('');
 
         try {
-            const res = await axios.post<{ answer: string }>('/api/chat', { message: input, lang: 'en' });
+            const res = await axios.post<{ answer: string }>(
+                `${apiUrl}/api/chat`, 
+                { message: input, lang: 'en' }
+            );
             const botMessage: Message = { sender: 'bot', text: res.data.answer };
             setMessages(prev => [...prev, botMessage]);
         } catch (error) {
