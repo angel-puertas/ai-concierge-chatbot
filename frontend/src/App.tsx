@@ -1,11 +1,11 @@
-import ChatWidget from './components/ChatWidget'
+import ChatWidget from "./components/ChatWidget";
 
 function App() {
-    return (
-        <div className="min-h-screen bg-white">
-            <ChatWidget />
-        </div>
-    )
+  return (
+    <div className="min-h-screen bg-white">
+      <ChatWidget />
+    </div>
+  );
 }
 
-export default App
+export default App;
