@@ -29,15 +29,15 @@ const start = async () => {
     console.log('MongoDB connected successfully');
 
     // CORS configuration
-    const corsOptions = {
-      origin: process.env.FRONTEND_URL,
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Access-Control-Allow-Origin'],
-    };
-    
+    const allowedOrigin = process.env.FRONTEND_URL;
+
+    app.use(cors({
+      origin: allowedOrigin,
+      credentials: true // only if you need cookies/auth headers
+    }));
+
+
     // Middleware
-    app.use(cors(corsOptions));
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
