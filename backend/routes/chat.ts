@@ -11,7 +11,7 @@ router.post('/chat', async (req, res) => {
     });
 
     try {
-        const { message, lang = 'en' } = req.body;
+        const { message, lang } = req.body;
 
         if (!message) {
             console.error('No message provided in request');
