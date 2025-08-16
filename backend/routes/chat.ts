@@ -13,6 +13,7 @@ router.post("/chat", async (req, res) => {
   try {
     const { message, lang } = req.body;
 
+    // Validate request body
     if (!message) {
       console.error("No message provided in request");
       return res.status(400).json({ error: "Message is required" });
@@ -37,6 +38,7 @@ router.post("/chat", async (req, res) => {
         },
       });
 
+      // FAQ found -> return it
       if (faq.docs.length > 0) {
         console.log("Found matching FAQ");
         return res.json({
@@ -45,7 +47,7 @@ router.post("/chat", async (req, res) => {
         });
       }
 
-      // When no FAQ matches
+      // No FAQ found -> query fallbackLogs
       const fallbackQuestion = await payload.find({
         collection: "fallbackLogs",
         where: {
@@ -54,6 +56,7 @@ router.post("/chat", async (req, res) => {
         },
       });
 
+      // if fallback log exists
       if (fallbackQuestion.docs.length > 0) {
         await payload.update({
           collection: "fallbackLogs",
@@ -66,6 +69,7 @@ router.post("/chat", async (req, res) => {
             count: fallbackQuestion.docs[0].count + 1,
           },
         });
+        // if fallback log doesnt exist
       } else {
         await payload.create({
           collection: "fallbackLogs",
@@ -76,6 +80,7 @@ router.post("/chat", async (req, res) => {
         });
       }
 
+      // ChatGPT fallback
       console.log("No matching FAQ found, querying OpenAI...");
       const response = await openai.chat.completions.create({
         model: "gpt-4o",
