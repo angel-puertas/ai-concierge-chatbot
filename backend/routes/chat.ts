@@ -1,8 +1,14 @@
 import express from "express";
 import payload from "payload";
 import OpenAI from "openai";
+import { z } from "zod";
 
 const router = express.Router();
+
+const ChatSchema = z.object({
+  message: z.string().min(1).max(2000),
+  lang: z.enum(["hr", "en"]).default("en"),
+});
 
 router.post("/chat", async (req, res) => {
   console.log("Received chat request:", {
@@ -10,14 +16,17 @@ router.post("/chat", async (req, res) => {
     headers: req.headers,
   });
 
-  try {
-    const { message, lang } = req.body;
+  const parsed = ChatSchema.safeParse(req.body);
+  if (!parsed.success) {
+    console.error("Validation failed:", parsed.error.format());
+    return res.status(400).json({
+      error: "Invalid request body",
+      issues: parsed.error.format(),
+    });
+  }
 
-    // Validate request body
-    if (!message) {
-      console.error("No message provided in request");
-      return res.status(400).json({ error: "Message is required" });
-    }
+  try {
+    const { message, lang } = parsed.data;
 
     if (!process.env.OPENAI_API_KEY) {
       console.error("OPENAI_API_KEY is not set");

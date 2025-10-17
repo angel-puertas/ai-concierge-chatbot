@@ -11,9 +11,11 @@ interface Message {
 }
 
 const ChatWidget = () => {
+  const MAX_MESSAGE_LENGTH = 400;
   const [language, setLanguage] = useState<Language>("en");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
+  const remaining = MAX_MESSAGE_LENGTH - input.length;
 
   const formatTime = (iso: string) =>
     new Date(iso).toLocaleTimeString([], {
@@ -22,7 +24,7 @@ const ChatWidget = () => {
     });
 
   const sendMessage = async () => {
-    if (!input) return;
+    if (!input.trim()) return;
 
     const userMessage: Message = {
       sender: "user",
@@ -45,6 +47,14 @@ const ChatWidget = () => {
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
+    }
+  };
+
+  const clearChat = () => {
+    if (messages.length === 0) return;
+    if (window.confirm("Clear chat history?")) {
+      setMessages([]);
+      setInput("");
     }
   };
 
@@ -87,16 +97,58 @@ const ChatWidget = () => {
         <input
           type="text"
           value={input}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setInput(e.target.value)
-          }
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const v = e.target.value;
+            // enforce max length (prevents longer input)
+            setInput(
+              v.length <= MAX_MESSAGE_LENGTH
+                ? v
+                : v.slice(0, MAX_MESSAGE_LENGTH)
+            );
+          }}
+          aria-describedby="charCounter"
           onKeyPress={(e) => e.key === "Enter" && sendMessage()}
           className={styles.messageInput}
           placeholder={placeholderText}
         />
+        <div
+          id="charCounter"
+          className={`${styles.charCounter} ${
+            remaining <= 20 ? styles.charCounterWarning : ""
+          }`}
+          aria-live="polite"
+        >
+          {input.length}/{MAX_MESSAGE_LENGTH}
+        </div>
         <button onClick={sendMessage} className={styles.sendButton}>
           Send
         </button>
+        <button
+          onClick={clearChat}
+          className={`${styles.sendButton} ${styles.clearButton}`}
+          type="button"
+        >
+          Clear
+        </button>
+      </div>
+
+      <div
+        style={{
+          fontSize: "0.75rem",
+          color: "#666",
+          textAlign: "center",
+          marginTop: "8px",
+        }}
+      >
+        {language === "hr" ? "Pokreće AI — " : "Powered by AI — "}
+        <a
+          href="/privacy"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "inherit", textDecoration: "underline" }}
+        >
+          {language === "hr" ? "Pravila privatnosti" : "Privacy policy"}
+        </a>
       </div>
     </div>
   );
