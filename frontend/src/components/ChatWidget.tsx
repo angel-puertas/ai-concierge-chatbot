@@ -7,17 +7,28 @@ type Language = "en" | "hr";
 interface Message {
   sender: "user" | "bot";
   text: string;
+  timestamp: string;
 }
 
 const ChatWidget = () => {
+  const [language, setLanguage] = useState<Language>("en");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
-  const [language, setLanguage] = useState<Language>("en");
+
+  const formatTime = (iso: string) =>
+    new Date(iso).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
   const sendMessage = async () => {
     if (!input) return;
 
-    const userMessage: Message = { sender: "user", text: input };
+    const userMessage: Message = {
+      sender: "user",
+      text: input,
+      timestamp: new Date().toISOString(),
+    };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
@@ -26,12 +37,19 @@ const ChatWidget = () => {
         `${import.meta.env.VITE_API_TARGET}/api/chat`,
         { message: input, lang: language }
       );
-      const botMessage: Message = { sender: "bot", text: res.data.answer };
+      const botMessage: Message = {
+        sender: "bot",
+        text: res.data.answer,
+        timestamp: new Date().toISOString(),
+      };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
+
+  const placeholderText =
+    language === "hr" ? "Upišite svoju poruku..." : "Type your message...";
 
   return (
     <div className={styles.chatContainer}>
@@ -54,7 +72,13 @@ const ChatWidget = () => {
               msg.sender === "user" ? styles.userMessage : styles.botMessage
             }`}
           >
-            <span className={styles.senderName}>{msg.sender}:</span> {msg.text}
+            <div className={styles.messageHeader}>
+              <span className={styles.senderName}>{msg.sender}</span>
+              <span className={styles.timestamp}>
+                {formatTime(msg.timestamp)}
+              </span>
+            </div>
+            <div className={styles.messageBody}>{msg.text}</div>{" "}
           </div>
         ))}
       </div>
@@ -68,7 +92,7 @@ const ChatWidget = () => {
           }
           onKeyPress={(e) => e.key === "Enter" && sendMessage()}
           className={styles.messageInput}
-          placeholder="Type your message..."
+          placeholder={placeholderText}
         />
         <button onClick={sendMessage} className={styles.sendButton}>
           Send
